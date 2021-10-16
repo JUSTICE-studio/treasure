@@ -45,8 +45,9 @@ public class Player : MonoBehaviour
         CameraPosY = Mathf.Clamp(CameraPosY + Touchfield.TouchDist.y * CameraPosSpeed * .1f, 0, 8f);
 
         CameraAngleY += Touchfield.TouchDist.x * CameraAngleSpeed;
-
+    
         Cam.transform.position = transform.position + Quaternion.AngleAxis(CameraAngleY, Vector3.up) * new Vector3(0, CameraPosY, 4);
         Cam.transform.rotation = Quaternion.LookRotation(transform.position + Vector3.up * 2f - Cam.transform.position, Vector3.up);
+
     }
 }
