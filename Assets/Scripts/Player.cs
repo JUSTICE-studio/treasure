@@ -18,7 +18,19 @@ public class Player : MonoBehaviour
 
     public float speed;
 
-    Rigidbody rb;
+    public CharacterController controller;
+
+    public float gravity = -9.81f;
+
+    bool isGrounded;
+
+    public Transform groundCheck;
+    public float groundDistance = 0.4f;
+    public LayerMask groundMask;
+
+    public float jumpHeight = 3;
+
+    Vector3 velocity;
     // Start is called before the first frame update
     void Awake()
     {
@@ -29,24 +41,32 @@ public class Player : MonoBehaviour
         {
             Cam.gameObject.SetActive(false);
         }
-        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        if(isGrounded && velocity.y < 0)
+        {
+            velocity.y = 0;
+        }
+
+        if(Input.GetButtonDown("Jump") && isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2 * gravity);
+        }
         if (!PV.IsMine)
             return;
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
+        Vector3 move = transform.right * h + transform.forward * v;
 
-        rb.velocity = new Vector3(h * speed, rb.velocity.y, v * speed);
+        controller.Move(move * speed * Time.deltaTime);
 
-        CameraPosY = Mathf.Clamp(CameraPosY + Touchfield.TouchDist.y * CameraPosSpeed * .1f, 0, 8f);
+        velocity.y += gravity * Time.deltaTime;
 
-        CameraAngleY += Touchfield.TouchDist.x * CameraAngleSpeed;
-
-        Cam.transform.position = transform.position + Quaternion.AngleAxis(CameraAngleY, Vector3.up) * new Vector3(0, CameraPosY, 4);
-        Cam.transform.rotation = Quaternion.LookRotation(transform.position + Vector3.up * 2f - Cam.transform.position, Vector3.up);
+        controller.Move(velocity * Time.deltaTime);
     }
 }
