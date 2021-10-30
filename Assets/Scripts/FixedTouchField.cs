@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 
 public class FixedTouchField : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
+    public GameObject Player;
     [HideInInspector]
     public Vector2 TouchDist;
     [HideInInspector]
@@ -38,6 +39,7 @@ public class FixedTouchField : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         {
             TouchDist = new Vector2();
         }
+        Player.transform.Rotate(0, TouchDist.x, 0);
     }
 
     public void OnPointerDown(PointerEventData eventData)
